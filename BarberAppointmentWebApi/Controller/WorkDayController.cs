@@ -8,17 +8,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace BarberAppointmentWebApi.Controller
 {
+    
     [ApiController]
     [Route("api/workdays")]
     public class WorkDayController : ControllerBase
     {
         [HttpGet]
+        [Authorize]
         public IActionResult GetWorkDays()
         {
-            return Ok(WorkDaysDataStore.Current.Days);
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client")) {
+                return Ok(WorkDaysDataStore.Current.Days);
+            }
+            return Unauthorized();
         }
 
         [HttpGet("{id}", Name = "GetWorkDayById")]
