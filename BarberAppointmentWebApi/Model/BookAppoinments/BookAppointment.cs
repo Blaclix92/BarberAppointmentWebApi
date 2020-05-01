@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BarberAppointmentWebApi.Model.BookAppoinment
+namespace BarberAppointmentWebApi.Model.BookAppoinments
 {
-    public class BookAppointmentForCreateData
+    public class BookAppointment
     {
-        [Required]
+        public int Id { get; set; }
         public string Date { get; set; }
-        [Required]
+        public int Cancel { get; set; }
         public string Hour { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using BarberAppointmentWebApi.Model;
-using BarberAppointmentWebApi.Model.WorkDay;
+using BarberAppointmentWebApi.Model.WorkDays;
 using BarberAppointmentWebApi.Model.AppointmentHour;
 
 using Microsoft.AspNetCore.Mvc;

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using BarberAppointmentWebApi.Model.AppointmentHour;
 
-namespace BarberAppointmentWebApi.Model.WorkDay
+namespace BarberAppointmentWebApi.Model.WorkDays
 {
-    public class WorkDay
+    public class WorkDayForCreateData
     {
-        public int Id { get; set; }
+        [Required(ErrorMessage = "You should provide a day value.")]
         public string Day { get; set; }
-        public int NumberOfAppointmentHours { get { return AppointmentHours.Count; } }
+        [Required(ErrorMessage = "You should provide a collection of hour values.")]
         public ICollection<AppointmentHour.AppointmentHour> AppointmentHours { get; set; } = new List<AppointmentHour.AppointmentHour>();
     }
 }

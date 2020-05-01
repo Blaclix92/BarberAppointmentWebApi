@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BarberAppointmentWebApi.Model.WorkDay;
+using BarberAppointmentWebApi.Model.WorkDays;
 using BarberAppointmentWebApi.Model.AppointmentHour;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

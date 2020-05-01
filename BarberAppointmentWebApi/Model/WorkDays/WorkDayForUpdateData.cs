@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BarberAppointmentWebApi.Model.AppointmentHour;
 
-namespace BarberAppointmentWebApi.Model.WorkDay
+namespace BarberAppointmentWebApi.Model.WorkDays
 {
     public class WorkDayForUpdateData
     {

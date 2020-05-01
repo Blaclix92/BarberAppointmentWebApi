@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BarberAppointmentWebApi.Model.WorkDay;
+using BarberAppointmentWebApi.Model.WorkDays;
 using BarberAppointmentWebApi.Model.AppointmentHour;
 namespace BarberAppointmentWebApi
 {
