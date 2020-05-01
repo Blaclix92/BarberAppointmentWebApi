@@ -20,20 +20,26 @@ namespace BarberAppointmentWebApi
                     Id = 1,
                     Date = "02-04-2019",
                     Hour = "11:00 AM",
-                    Cancel= 0
+                    Cancel= 0,
+                    BarberId = 2,
+                    ClientId = 3
                 },
                   new BookAppointment()
                 {
                     Id = 2,
                     Date = "10-04-2019",
                     Hour = "11:00 AM",
-                    Cancel= 0
+                    Cancel= 0,
+                    BarberId = 2,
+                    ClientId = 3
                 },  new BookAppointment()
                 {
                     Id = 3,
                     Date = "25-04-2019",
                     Hour = "11:00 AM",
-                    Cancel= 0
+                    Cancel= 0,
+                    BarberId = 2,
+                    ClientId = 3
                 },
             };
         }

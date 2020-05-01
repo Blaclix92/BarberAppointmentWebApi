@@ -11,6 +11,7 @@ namespace BarberAppointmentWebApi.Model.CustomWorkDays
         public int Id { get; set; }
         public string Date { get; set; }
         public int OffDay { get; set; }
+        public int BarberId { get; set; }
         public int NumberOfAppointment { get {return CustomAppointmentHour.Count(); } }
         public ICollection<CustomAppointmentHour> CustomAppointmentHour { get; set; } = new List<CustomAppointmentHour>();
     }

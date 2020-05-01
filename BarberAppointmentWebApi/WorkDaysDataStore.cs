@@ -19,6 +19,7 @@ namespace BarberAppointmentWebApi
                 new WorkDay
                 {   Id=1,
                     Day ="Monday",
+                    BarberId = 2,
                     AppointmentHours = new List<AppointmentHour>() {
                         new AppointmentHour(){ Id= 1, Hour="11:00 AM"},
                         new AppointmentHour(){ Id= 2, Hour="12:00 PM"},
@@ -26,6 +27,7 @@ namespace BarberAppointmentWebApi
                 } },
                 new WorkDay{
                     Id =2,
+                    BarberId = 2,
                     Day ="Tuesday",
                 AppointmentHours = new List<AppointmentHour>() {
                         new AppointmentHour(){ Id= 1, Hour="08:00 AM"},
@@ -34,6 +36,7 @@ namespace BarberAppointmentWebApi
                 } },
                 new WorkDay{
                     Id =3,
+                    BarberId = 2,
                     Day ="Wednesday",
                 AppointmentHours = new List<AppointmentHour>() {
                         new AppointmentHour(){ Id= 1, Hour="09:00 AM"},

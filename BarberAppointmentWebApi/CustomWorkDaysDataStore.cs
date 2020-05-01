@@ -20,6 +20,7 @@ namespace BarberAppointmentWebApi
                 {   Id=1,
                     Date ="12-02-2019",
                     OffDay = 0,
+                    BarberId = 2,
                     CustomAppointmentHour = new List<CustomAppointmentHour>() {
                         new CustomAppointmentHour(){ Id= 1, Visible=1, Hour="11:00 AM"},
                         new CustomAppointmentHour(){ Id= 2, Visible=1, Hour="12:00 PM"},
@@ -29,6 +30,7 @@ namespace BarberAppointmentWebApi
                     Id =2,
                     Date ="25-02-2019",
                     OffDay = 0,
+                    BarberId = 2,
                     CustomAppointmentHour = new List<CustomAppointmentHour>() {
                         new CustomAppointmentHour(){ Id= 1, Visible=1, Hour="11:00 AM"},
                         new CustomAppointmentHour(){ Id= 2, Visible=1, Hour="12:00 PM"},
@@ -38,6 +40,7 @@ namespace BarberAppointmentWebApi
                     Id =3,
                     Date ="25-03-2019",
                     OffDay = 0,
+                    BarberId = 2,
                  CustomAppointmentHour = new List<CustomAppointmentHour>() {
                         new CustomAppointmentHour(){ Id= 1, Visible=1, Hour="11:00 AM"},
                         new CustomAppointmentHour(){ Id= 2, Visible=1, Hour="12:00 PM"},

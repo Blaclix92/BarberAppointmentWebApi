@@ -17,7 +17,7 @@ namespace BarberAppointmentIdentity
             var customProfile = new IdentityResource(
             name: "custom.profile",
             displayName: "Custom profile",
-            claimTypes: new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role });
+            claimTypes: new[] { JwtClaimTypes.Name, JwtClaimTypes.Email, JwtClaimTypes.Role, "userId" });
             return new List<IdentityResource> {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
@@ -57,21 +57,21 @@ namespace BarberAppointmentIdentity
                     SubjectId="1",
                     Username = "Admin",
                     Password = "test",
-                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "admin"), new Claim(JwtClaimTypes.Name, "Reshma Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "admin"), new Claim(JwtClaimTypes.Name, "Reshma Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "1") }
                 },
                 new TestUser
                 {
                     SubjectId="2",
                     Username = "Barber",
                     Password = "test",
-                     Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "barber"), new Claim(JwtClaimTypes.Name, "benny Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "barber"), new Claim(JwtClaimTypes.Name, "benny Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "2") }
                 },
                 new TestUser
                 {
                     SubjectId="3",
                     Username = "Client",
                     Password = "test",
-                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "3") }
                 }
 
 
@@ -97,7 +97,7 @@ namespace BarberAppointmentIdentity
                     DisplayName = "Read only access to DemoApi"
                 }
             },
-                    UserClaims =  { JwtClaimTypes.Name, JwtClaimTypes.Email,  JwtClaimTypes.Role },
+                    UserClaims =  { JwtClaimTypes.Name, JwtClaimTypes.Email,  JwtClaimTypes.Role, "userId" },
                 }
             };
         }
