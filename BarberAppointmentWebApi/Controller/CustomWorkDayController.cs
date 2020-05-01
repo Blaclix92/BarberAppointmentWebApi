@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BarberAppointmentWebApi.Model.CustomWorkDays;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,7 @@ namespace BarberAppointmentWebApi.Controller
 {
     [ApiController]
     [Route("api/customworkdays")]
+    [Authorize]
     public class CustomWorkDayController : ControllerBase
     {
         [HttpGet]
@@ -33,63 +36,87 @@ namespace BarberAppointmentWebApi.Controller
         [HttpPost]
         public IActionResult CreateCustomWorkDay([FromBody] CustomWorkDayForCreateData data)
         {
-            var maxCustomWorkDayId = WorkDaysDataStore.Current.Days.Max(wd => wd.Id);
-            var newCustomWorkDay = new CustomWorkDay()
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                Id = ++maxCustomWorkDayId,
-                OffDay = data.OffDay,
-                Date = data.Date,
-                CustomAppointmentHour = data.CustomAppointmentHour
-            };
-            CustomWorkDaysDataStore.Current.Days.Add(newCustomWorkDay);
-            return CreatedAtRoute("GetCustomWorkDayById", new { newCustomWorkDay.Id }, newCustomWorkDay);
+                var maxCustomWorkDayId = WorkDaysDataStore.Current.Days.Max(wd => wd.Id);
+                var newCustomWorkDay = new CustomWorkDay()
+                {
+                    Id = ++maxCustomWorkDayId,
+                    OffDay = data.OffDay,
+                    Date = data.Date,
+                    CustomAppointmentHour = data.CustomAppointmentHour
+                };
+                CustomWorkDaysDataStore.Current.Days.Add(newCustomWorkDay);
+                return CreatedAtRoute("GetCustomWorkDayById", new { newCustomWorkDay.Id }, newCustomWorkDay);
+            }
+            return Unauthorized();
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateWorkDay(int id, [FromBody] CustomWorkDayForUpdateData data)
         {
-            CustomWorkDay customworkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (customworkDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
+                CustomWorkDay customworkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (customworkDay == null)
+                {
+                    return NotFound();
+                }
+                customworkDay.OffDay = data.OffDay;
+                return NoContent();
             }
-            customworkDay.OffDay = data.OffDay;
-            return NoContent();
+            return Unauthorized();
         }
 
         [HttpPatch("{id}")]
         public IActionResult PatchWorkDay(int id, [FromBody] JsonPatchDocument<CustomWorkDayForUpdateData> patchDoc)
         {
-            CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (customWorkDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
-            }
-            CustomWorkDayForUpdateData patchCustomWorkDay = new CustomWorkDayForUpdateData()
-            {
-                OffDay = customWorkDay.OffDay,
-            };
+                CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (customWorkDay == null)
+                {
+                    return NotFound();
+                }
+                CustomWorkDayForUpdateData patchCustomWorkDay = new CustomWorkDayForUpdateData()
+                {
+                    OffDay = customWorkDay.OffDay,
+                };
 
-            patchDoc.ApplyTo(patchCustomWorkDay, ModelState);
+                patchDoc.ApplyTo(patchCustomWorkDay, ModelState);
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                customWorkDay.OffDay = patchCustomWorkDay.OffDay;
+                return NoContent();
             }
-            customWorkDay.OffDay = patchCustomWorkDay.OffDay;
-            return NoContent();
+            return Unauthorized();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteWorkDay(int id)
         {
-            CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (customWorkDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
+                CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (customWorkDay == null)
+                {
+                    return NotFound();
+                }
+                CustomWorkDaysDataStore.Current.Days.Remove(customWorkDay);
+                return NoContent();
             }
-            CustomWorkDaysDataStore.Current.Days.Remove(customWorkDay);
-            return NoContent();
+            return Unauthorized();
         }
     }
 }

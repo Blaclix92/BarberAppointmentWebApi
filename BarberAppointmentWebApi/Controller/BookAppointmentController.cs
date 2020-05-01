@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using BarberAppointmentWebApi.Model.BookAppoinment;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,7 @@ namespace BarberAppointmentWebApi.Controller
 {
     [Route("api/bookappointments")]
     [ApiController]
+    [Authorize]
     public class BookAppointmentController : ControllerBase
     {
         [HttpGet]
@@ -87,13 +90,19 @@ namespace BarberAppointmentWebApi.Controller
         [HttpDelete("{id}")]
         public IActionResult DeleteBookAppointment(int id)
         {
-            BookAppointment bookAppointment  = BookAppointmentDataStore.Current.Appointments.FirstOrDefault(ba => ba.Id == id);
-            if (bookAppointment == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
+                BookAppointment bookAppointment = BookAppointmentDataStore.Current.Appointments.FirstOrDefault(ba => ba.Id == id);
+                if (bookAppointment == null)
+                {
+                    return NotFound();
+                }
+                BookAppointmentDataStore.Current.Appointments.Remove(bookAppointment);
+                return NoContent();
             }
-            BookAppointmentDataStore.Current.Appointments.Remove(bookAppointment);
-            return NoContent();
+            return Unauthorized();
         }
     }
 }

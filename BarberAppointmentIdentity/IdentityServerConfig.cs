@@ -55,21 +55,21 @@ namespace BarberAppointmentIdentity
                 new TestUser
                 {
                     SubjectId="1",
-                    Username = "ZeroKoll",
+                    Username = "Admin",
                     Password = "test",
                     Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "admin"), new Claim(JwtClaimTypes.Name, "Reshma Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
                 },
                 new TestUser
                 {
                     SubjectId="2",
-                    Username = "OneKoll",
+                    Username = "Barber",
                     Password = "test",
                      Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "barber"), new Claim(JwtClaimTypes.Name, "benny Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
                 },
                 new TestUser
                 {
                     SubjectId="3",
-                    Username = "TwoKoll",
+                    Username = "Client",
                     Password = "test",
                     Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com") }
                 }

@@ -16,18 +16,13 @@ namespace BarberAppointmentWebApi.Controller
     
     [ApiController]
     [Route("api/workdays")]
+    [Authorize]
     public class WorkDayController : ControllerBase
     {
         [HttpGet]
-        [Authorize]
         public IActionResult GetWorkDays()
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
-            var role = claimsPrincipal.FindFirst("role").Value;
-            if (!role.Equals("client")) {
-                return Ok(WorkDaysDataStore.Current.Days);
-            }
-            return Unauthorized();
+            return Ok(WorkDaysDataStore.Current.Days);
         }
 
         [HttpGet("{id}", Name = "GetWorkDayById")]
@@ -44,63 +39,87 @@ namespace BarberAppointmentWebApi.Controller
         [HttpPost]
         public IActionResult CreateWorkDay([FromBody] WorkDayForCreateData data)
         {
-            var maxWorkDayId = WorkDaysDataStore.Current.Days.Max(wd => wd.Id);
-            var newWorkDay = new WorkDay()
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                Id = ++maxWorkDayId,
-                Day = data.Day,
-                AppointmentHours = data.AppointmentHours
-            };
-            WorkDaysDataStore.Current.Days.Add(newWorkDay);
-            return CreatedAtRoute("GetWorkDayById", new { newWorkDay.Id }, newWorkDay);
+                var maxWorkDayId = WorkDaysDataStore.Current.Days.Max(wd => wd.Id);
+                var newWorkDay = new WorkDay()
+                {
+                    Id = ++maxWorkDayId,
+                    Day = data.Day,
+                    AppointmentHours = data.AppointmentHours
+                };
+                WorkDaysDataStore.Current.Days.Add(newWorkDay);
+                return CreatedAtRoute("GetWorkDayById", new { newWorkDay.Id }, newWorkDay);
+            }
+            return Unauthorized();
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateWorkDay(int id, [FromBody] WorkDayForUpdateData data)
         {
-            WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (workDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
-            }
+                WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (workDay == null)
+                {
+                    return NotFound();
+                }
 
-            workDay.Day = data.Day;
-            return NoContent();
+                workDay.Day = data.Day;
+                return NoContent();
+            }
+            return Unauthorized();
         }
 
         [HttpPatch("{id}")]
         public IActionResult PatchWorkDay(int id, [FromBody] JsonPatchDocument<WorkDayForUpdateData> patchDoc)
         {
-            WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (workDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
-            }
-            WorkDayForUpdateData patchWorkDay = new WorkDayForUpdateData()
-            {
-                Day = workDay.Day
-            };
+                WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (workDay == null)
+                {
+                    return NotFound();
+                }
+                WorkDayForUpdateData patchWorkDay = new WorkDayForUpdateData()
+                {
+                    Day = workDay.Day
+                };
 
-            patchDoc.ApplyTo(patchWorkDay,ModelState);
+                patchDoc.ApplyTo(patchWorkDay, ModelState);
 
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                workDay.Day = patchWorkDay.Day;
+                return NoContent();
             }
-            workDay.Day = patchWorkDay.Day;
-            return NoContent();
+            return Unauthorized();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteWorkDay(int id)
         {
-            WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
-            if (workDay == null)
+            var claimsPrincipal = User as ClaimsPrincipal;
+            var role = claimsPrincipal.FindFirst("role").Value;
+            if (!role.Equals("client"))
             {
-                return NotFound();
+                WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                if (workDay == null)
+                {
+                    return NotFound();
+                }
+                WorkDaysDataStore.Current.Days.Remove(workDay);
+                return NoContent();
             }
-            WorkDaysDataStore.Current.Days.Remove(workDay);
-            return NoContent();
+            return Unauthorized();
         }
     }
 }
