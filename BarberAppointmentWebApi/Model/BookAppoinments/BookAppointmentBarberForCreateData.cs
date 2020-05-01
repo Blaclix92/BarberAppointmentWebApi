@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace BarberAppointmentWebApi.Model.BookAppoinments
 {
-    public class BookAppointmentForCreateData
+    public class BookAppointmentBarberForCreateData
     {
         [Required]
         public string Date { get; set; }
         [Required]
         public string Hour { get; set; }
+        [Required]
+        public int ClientId { get; set; }
     }
 }

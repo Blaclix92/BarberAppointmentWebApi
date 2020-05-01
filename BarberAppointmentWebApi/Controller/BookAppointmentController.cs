@@ -15,16 +15,17 @@ namespace BarberAppointmentWebApi.Controller
     [Authorize]
     public class BookAppointmentController : ControllerBase
     {
-        [HttpGet]
         [Route("api/bookappointments")]
-        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        [Authorize(Roles = "admin")]
         public IActionResult GetBookAppointments()
         {
             return Ok(BookAppointmentDataStore.Current.Appointments);
         }
 
+        [Route("api/bookappointments")]
         [HttpGet("{id}", Name = "GetBookAppointmentById")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "admin")]
         public IActionResult GetBookAppointmentById(int id)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
@@ -38,7 +39,7 @@ namespace BarberAppointmentWebApi.Controller
 
         [Route("api/barber/bookappointments")]
         [HttpGet("{date}", Name = "GetBookAppointmentsByDateAndBarberId")]
-        [Authorize(Roles ="Barber")]
+        [Authorize(Roles = "barber")]
         public IActionResult GetBookAppointmentsByDateAndBarberId(string date)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
@@ -51,10 +52,10 @@ namespace BarberAppointmentWebApi.Controller
                 return Ok(appointments);
         }
 
-        [Route("api/barber/bookappointments/{clientId}")]
+        [Route("api/barber/bookappointments")]
         [HttpPost]
-        [Authorize(Roles = "Barber")]
-        public IActionResult CreateBookAppointmentForBarber(int clientId, [FromBody] BookAppointmentForCreateData data)
+        [Authorize(Roles = "barber")]
+        public IActionResult CreateBookAppointmentForBarber(int clientId, [FromBody] BookAppointmentBarberForCreateData data)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
@@ -66,16 +67,34 @@ namespace BarberAppointmentWebApi.Controller
                 Cancel = 0,
                 Hour = data.Hour,
                 Date = data.Date,
-                ClientId = clientId, // check uitvoeren van barber clients list
+                ClientId = data.ClientId, // check uitvoeren van barber clients list
                 BarberId = barberId
             };
             BookAppointmentDataStore.Current.Appointments.Add(newBookAppointment);
-            return CreatedAtRoute("GetBookAppointmentsById", new { newBookAppointment.Id }, newBookAppointment);
+            return Ok(newBookAppointment);
+        }
+
+        [Route("api/barber/bookappointments")]
+        [HttpPut("{id}")]
+        [Authorize(Roles = "barber")]
+        public IActionResult UpdateBookAppointmentForBarber(int id, [FromBody] BookAppointmentForUpdateData data)
+        {
+            var claimsPrincipal = User as ClaimsPrincipal;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
+            BookAppointment bookAppointment = BookAppointmentDataStore.Current.Appointments.FirstOrDefault(ba => ba.Id == id && ba.BarberId == barberId);
+            if (bookAppointment == null)
+            {
+                return NotFound();
+            }
+
+            bookAppointment.Cancel = data.Cancel;
+            bookAppointment.Hour = data.Hour;
+            return NoContent();
         }
 
         [Route("api/clients/bookappointments")]
         [HttpGet("{date}", Name = "GetBookAppointmentByDateClientId")]
-        [Authorize(Roles ="Client")]
+        [Authorize(Roles ="client")]
         public IActionResult GetBookAppointmentByDateClientId(string date)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
@@ -88,10 +107,10 @@ namespace BarberAppointmentWebApi.Controller
             return Ok(appointment);
         }
 
-        [Route("api/client/bookappointments/")]
+        [Route("api/client/bookappointments")]
         [HttpPost]
-        [Authorize(Roles = "Client")]
-        public IActionResult CreateBookAppointment([FromBody] BookAppointmentForCreateData data)
+        [Authorize(Roles = "client")]
+        public IActionResult CreateBookAppointment([FromBody] BookAppointmentClientForCreateData data)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             int clientId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
@@ -104,28 +123,10 @@ namespace BarberAppointmentWebApi.Controller
                 Hour = data.Hour,
                 Date = data.Date,
                 ClientId = clientId,
-                BarberId = 2 // TODO: this should be fetched from database
+                BarberId = data.BarberId // TODO: this should be fetched from database
             };
             BookAppointmentDataStore.Current.Appointments.Add(newBookAppointment);
             return CreatedAtRoute("GetBookAppointmentsById", new { newBookAppointment.Id }, newBookAppointment);
-        }
-
-        [Route("api/barber/bookappointments/")]
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Barber")]
-        public IActionResult UpdateBookAppointmentForBarber(int id, [FromBody] BookAppointmentForUpdateData data)
-        {
-            var claimsPrincipal = User as ClaimsPrincipal;
-            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
-                BookAppointment bookAppointment = BookAppointmentDataStore.Current.Appointments.FirstOrDefault(ba => ba.Id == id && ba.BarberId == barberId);
-                if (bookAppointment == null)
-                {
-                    return NotFound();
-                }
-
-                bookAppointment.Cancel = data.Cancel;
-                bookAppointment.Hour = data.Hour;
-                return NoContent();
         }
 
         [Route("api/bookappointments")]
