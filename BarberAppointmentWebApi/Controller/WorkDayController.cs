@@ -23,7 +23,6 @@ namespace BarberAppointmentWebApi.Controller
         [Authorize(Roles ="admin")]
         public IActionResult GetWorkDays()
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
             return Ok(WorkDaysDataStore.Current.Days);
         }
 
@@ -36,7 +35,7 @@ namespace BarberAppointmentWebApi.Controller
             string role = claimsPrincipal.FindFirst("role").Value;
             if (!role.Equals("admin"))
             {
-                int barberId = role == "barber" ? userId : 2; //TODO: replace (2) with barber id from database
+                int barberId = role == "barber" ? userId : 2; //TODO: replace (2) with barber id from database find it with userId
                 List<WorkDay> workdays = WorkDaysDataStore.Current.Days.Where(wd => wd.BarberId == barberId).ToList();
                 if (workdays.Count == 0 || workdays == null)
                 {
@@ -71,7 +70,7 @@ namespace BarberAppointmentWebApi.Controller
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             int clientId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
-            int barberId = 2; //TODO: replace (2) with barber id from database
+            int barberId = 2; //TODO: replace (2) with barber id from database find it with userId
             WorkDay workDay = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id && wd.BarberId == barberId);
             if (workDay == null)
             {
@@ -91,6 +90,7 @@ namespace BarberAppointmentWebApi.Controller
             }
             return Ok(workDay);
         }
+
         [Route("api/workdays")]
         [HttpPost]
         public IActionResult CreateWorkDay([FromBody] WorkDayForCreateData data)

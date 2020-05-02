@@ -13,6 +13,8 @@ namespace BarberAppointmentWebApi.Model.CustomWorkDays
         public string Date { get; set; }
         [Required]
         public int OffDay { get; set; }
+        [Required]
+        public int BarberId { get; set; }
         [Required(ErrorMessage = "You should provide a collection of appointment hour values.")]
         public ICollection<CustomAppointmentHour> CustomAppointmentHour { get; set; } = new List<CustomAppointmentHour>();
     }

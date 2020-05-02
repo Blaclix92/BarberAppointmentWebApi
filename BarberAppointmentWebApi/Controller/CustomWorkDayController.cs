@@ -12,17 +12,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace BarberAppointmentWebApi.Controller
 {
     [ApiController]
-    [Route("api/customworkdays")]
     [Authorize]
     public class CustomWorkDayController : ControllerBase
     {
+        [Route("api/customworkdays")]
         [HttpGet]
         public IActionResult GetCustomWorkDays()
         {
             return Ok(CustomWorkDaysDataStore.Current.Days);
         }
 
+        [Route("api/customworkdays")]
         [HttpGet("{id}", Name = "GetCustomWorkDayById")]
+        [Authorize(Roles ="admin")]
         public IActionResult GetCustomWorkDayById(int id)
         {
             CustomWorkDay workDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
@@ -33,11 +35,57 @@ namespace BarberAppointmentWebApi.Controller
             return Ok(workDay);
         }
 
+        [Route("api/barber/customworkdays")]
+        [HttpGet("{id}", Name = "GetCustomWorkDayByIdForBarber")]
+        [Authorize(Roles = "barber")]
+        public IActionResult GetCustomWorkDayByIdForBarber(int id)
+        {
+            var claimsPrincipal = User as ClaimsPrincipal;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
+            CustomWorkDay workDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id && wd.BarberId == barberId);
+            if (workDay == null)
+            {
+                return NotFound();
+            }
+            return Ok(workDay);
+        }
+
+        [Route("api/barber/customworkdays")]
+        [HttpGet("{date}", Name = "GetCustomWorkDayByDateForBarber")]
+        [Authorize(Roles ="barber")]
+        public IActionResult GetCustomWorkDayByDateForBarber(string date)
+        {
+            var claimsPrincipal = User as ClaimsPrincipal;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
+            CustomWorkDay workDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.BarberId == barberId && wd.Date == date);
+            if (workDay == null)
+            {
+                return NotFound();
+            }
+            return Ok(workDay);
+        }
+
+        [Route("api/client/customworkdays")]
+        [HttpGet("{date}", Name = "GetCustomWorkDayByDateForClient")]
+        public IActionResult GetCustomWorkDayByDateForClient(string date)
+        {
+            var claimsPrincipal = User as ClaimsPrincipal;
+            int clientId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
+            int barberId = 2; // find barber id with client id
+            CustomWorkDay workDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.BarberId == barberId && wd.Date == date);
+            if (workDay == null)
+            {
+                return NotFound();
+            }
+            return Ok(workDay);
+        }
+
+        [Route("api/customworkdays")]
         [HttpPost]
         public IActionResult CreateCustomWorkDay([FromBody] CustomWorkDayForCreateData data)
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
-            var role = claimsPrincipal.FindFirst("role").Value;
+            ClaimsPrincipal claimsPrincipal = User as ClaimsPrincipal;
+            string role = claimsPrincipal.FindFirst("role").Value;
             if (!role.Equals("client"))
             {
                 var maxCustomWorkDayId = WorkDaysDataStore.Current.Days.Max(wd => wd.Id);
@@ -46,22 +94,24 @@ namespace BarberAppointmentWebApi.Controller
                     Id = ++maxCustomWorkDayId,
                     OffDay = data.OffDay,
                     Date = data.Date,
+                    BarberId = data.BarberId,
                     CustomAppointmentHour = data.CustomAppointmentHour
                 };
                 CustomWorkDaysDataStore.Current.Days.Add(newCustomWorkDay);
-                return CreatedAtRoute("GetCustomWorkDayById", new { newCustomWorkDay.Id }, newCustomWorkDay);
+                return CreatedAtRoute(role.Equals("admin")? "GetCustomWorkDayById": "GetCustomWorkDayByIdForBarber", new { newCustomWorkDay.Id }, newCustomWorkDay);
             }
             return Unauthorized();
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdateWorkDay(int id, [FromBody] CustomWorkDayForUpdateData data)
+        [Route("api/customworkdays")]
+        [HttpPut()]
+        public IActionResult UpdateWorkDay([FromBody] CustomWorkDayForUpdateData data)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             var role = claimsPrincipal.FindFirst("role").Value;
             if (!role.Equals("client"))
             {
-                CustomWorkDay customworkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                CustomWorkDay customworkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == data.Id);
                 if (customworkDay == null)
                 {
                     return NotFound();
@@ -72,14 +122,17 @@ namespace BarberAppointmentWebApi.Controller
             return Unauthorized();
         }
 
+        [Route("api/customworkdays")]
         [HttpPatch("{id}")]
         public IActionResult PatchWorkDay(int id, [FromBody] JsonPatchDocument<CustomWorkDayForUpdateData> patchDoc)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
-            var role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
+            string role = claimsPrincipal.FindFirst("role").Value;
             if (!role.Equals("client"))
             {
-                CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                CustomWorkDay customWorkDay = role.Equals("admin") ? CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id):
+                CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id && wd.BarberId == barberId);
                 if (customWorkDay == null)
                 {
                     return NotFound();
@@ -101,14 +154,17 @@ namespace BarberAppointmentWebApi.Controller
             return Unauthorized();
         }
 
+        [Route("api/customworkdays")]
         [HttpDelete("{id}")]
         public IActionResult DeleteWorkDay(int id)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             var role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
             if (!role.Equals("client"))
             {
-                CustomWorkDay customWorkDay = CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id);
+                CustomWorkDay customWorkDay = role.Equals("admin") ? CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id) :
+                CustomWorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == id && wd.BarberId == barberId);
                 if (customWorkDay == null)
                 {
                     return NotFound();

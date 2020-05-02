@@ -9,6 +9,8 @@ namespace BarberAppointmentWebApi.Model.CustomWorkDays
     public class CustomWorkDayForUpdateData
     {
         [Required]
+        public int Id { get; set; }
+        [Required]
         public int OffDay { get; set; }
     }
 }
