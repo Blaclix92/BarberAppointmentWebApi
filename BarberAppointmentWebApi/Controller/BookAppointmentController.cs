@@ -28,7 +28,6 @@ namespace BarberAppointmentWebApi.Controller
         [Authorize(Roles = "admin")]
         public IActionResult GetBookAppointmentById(int id)
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
             BookAppointment appointment = BookAppointmentDataStore.Current.Appointments.FirstOrDefault(ba => ba.Id == id);
             if (appointment == null)
             {
