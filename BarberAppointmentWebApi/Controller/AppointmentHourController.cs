@@ -33,9 +33,11 @@ namespace BarberAppointmentWebApi.Controller
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             var role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
             if (!role.Equals("client"))
             {
-                WorkDay day = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId);
+                WorkDay day = role.Equals("admin")? WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId):
+                    WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId && wd.BarberId == barberId);
                 if (day == null)
                 {
                     return NotFound();
@@ -58,9 +60,11 @@ namespace BarberAppointmentWebApi.Controller
         {
             var claimsPrincipal = User as ClaimsPrincipal;
             var role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
             if (!role.Equals("client"))
             {
-                AppointmentHour appointmentHour = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
+                AppointmentHour appointmentHour = role.Equals("admin")?WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id): 
+                    WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId && wd.BarberId == barberId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
                 if (appointmentHour == null)
                 {
                     return NotFound();
@@ -75,10 +79,12 @@ namespace BarberAppointmentWebApi.Controller
         public IActionResult PatchAppointmentHour(int workdayId, int id, [FromBody] JsonPatchDocument<AppointmentHourForUpdateData> patchDoc)
         {
             var claimsPrincipal = User as ClaimsPrincipal;
-            var role = claimsPrincipal.FindFirst("role").Value;
+            string role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
             if (!role.Equals("client"))
             {
-                AppointmentHour appointmentHour = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
+                AppointmentHour appointmentHour = role.Equals("admin") ? WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id):
+                WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId && wd.BarberId == barberId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
                 if (appointmentHour == null)
                 {
                     return NotFound();
@@ -113,11 +119,13 @@ namespace BarberAppointmentWebApi.Controller
         [HttpDelete("{id}")]
         public IActionResult DeleteAppointmentHourById(int workdayId, int id)
         {
-            var claimsPrincipal = User as ClaimsPrincipal;
-            var role = claimsPrincipal.FindFirst("role").Value;
+            ClaimsPrincipal claimsPrincipal = User as ClaimsPrincipal;
+            string role = claimsPrincipal.FindFirst("role").Value;
+            int barberId = int.Parse(claimsPrincipal.FindFirst("userId").Value);
             if (!role.Equals("client"))
             {
-                AppointmentHour appointmentHour = WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
+                AppointmentHour appointmentHour = role.Equals("admin") ? WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId).AppointmentHours.FirstOrDefault(ah => ah.Id == id):
+                    WorkDaysDataStore.Current.Days.FirstOrDefault(wd => wd.Id == workdayId && wd.BarberId == barberId).AppointmentHours.FirstOrDefault(ah => ah.Id == id);
                 if (appointmentHour == null)
                 {
                     return NotFound();
