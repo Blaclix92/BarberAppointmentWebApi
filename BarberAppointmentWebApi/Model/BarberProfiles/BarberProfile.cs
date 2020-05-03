@@ -19,6 +19,6 @@ namespace BarberAppointmentWebApi.Model.BarberProfiles
         public ICollection<CustomWorkDay> CustomWorkDays { get; set; } = new List<CustomWorkDay>();
         public ICollection<BookAppointment> BookAppoinments { get; set; } = new List<BookAppointment>();
         public ICollection<ClientProfile> ClientProfiles { get; set; } = new List<ClientProfile>();
-        public string UserId { get; set; }
+        public int UserId { get; set; }
     }
 }

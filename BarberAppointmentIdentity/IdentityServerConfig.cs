@@ -57,21 +57,56 @@ namespace BarberAppointmentIdentity
                     SubjectId="1",
                     Username = "Admin",
                     Password = "test",
-                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "admin"), new Claim(JwtClaimTypes.Name, "Reshma Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "1") }
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "admin"), new Claim(JwtClaimTypes.Name, "Reshma Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "99") }
                 },
                 new TestUser
                 {
-                    SubjectId="2",
+                    SubjectId="8",
                     Username = "Barber",
                     Password = "test",
                     Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "barber"), new Claim(JwtClaimTypes.Name, "benny Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "2") }
                 },
+                   new TestUser
+                {
+                    SubjectId="9",
+                    Username = "Barber2",
+                    Password = "test",
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "barber"), new Claim(JwtClaimTypes.Name, "beno Mohan"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "7") }
+                },
                 new TestUser
                 {
-                    SubjectId="3",
+                    SubjectId="1",
                     Username = "Client",
                     Password = "test",
                     Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "3") }
+                },
+                new TestUser
+                {
+                    SubjectId="2",
+                    Username = "Client2",
+                    Password = "test",
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "9") }
+                },
+                     new TestUser
+                {
+                    SubjectId="3",
+                    Username = "Client3",
+                    Password = "test",
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "50") }
+                },
+                new TestUser
+                {
+                    SubjectId="4",
+                    Username = "Client4",
+                    Password = "test",
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "1") }
+                },
+                          new TestUser
+                {
+                    SubjectId="5",
+                    Username = "Client5",
+                    Password = "test",
+                    Claims = new List<Claim>(){ new Claim(JwtClaimTypes.Role, "client"), new Claim(JwtClaimTypes.Name, "Zhamin Magdalena"), new Claim(JwtClaimTypes.Email,"blabl@gamil.com"), new Claim("userId", "5") }
                 }
 
 
